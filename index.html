@@ -126,7 +126,7 @@
         text-align: center;
     }
     .marker {
-        background: #91dbf1;
+        background-color: #91dbf1;
     }
     .text {
         width: 100%;
@@ -151,6 +151,26 @@
         font-size: 1rem;
         cursor: pointer;
     }
+    .button {
+        background-color: #007BFF; /* モダンな青色 */
+        color: #fff; /* 白文字 */
+        border: none; /* 枠線なし */
+        border-radius: 5px; /* 角を少し丸く */
+        padding: 10px 20px; /* ボタンの内側の余白 */
+        font-size: 1rem; /* フォントサイズ */
+        cursor: pointer; /* ポインタを表示 */
+        transition: background-color 0.3s ease, transform 0.2s ease; /* ホバー時のアニメーション */
+    }
+
+    .button:hover {
+        background-color: #0056b3; /* ホバー時に少し濃い青色に */
+        transform: scale(1.05); /* 少し拡大 */
+    }
+
+    .button:active {
+        background-color: #003f7f; /* クリック時にさらに濃い青色に */
+        transform: scale(0.95); /* 少し縮小 */
+    }
     .hidden {
         display: none;
     }
@@ -159,12 +179,21 @@
 </head>
 <body>
 
-    <div class="text-container">
-        <div class="question">
-            <span id="entered" class="marker"></span>
-            <span id="remained">JavaScript</span>
+    <div id="game" class="text-container">
+        <label for="inputText">
+            <div class="question">
+                <span id="entered" class="marker"></span>
+                <span id="remained"></span>
+            </div>
+            <input type="text" class="text" id="inputText" autocomplete="off" autofocus>
+        </label>
+    </div>
+
+    <div id="message" class="text-container hidden">
+        <div class="message">
+            <p>ゲームクリア！</p>
+            <button id="replayBtn" class="button">もう一度プレイする</button>
         </div>
-        <input type="text" class="text" id="inputText" autocomplete="off">
     </div>
 
     <script>
@@ -183,11 +212,44 @@
         const entered = document.getElementById('entered');
         const remained = document.getElementById('remained');
         const inputText = document.getElementById('inputText');
+        const game = document.getElementById('game');
+        const message = document.getElementById('message');
+        const replayBtn = document.getElementById('replayBtn');
 
         let remainedTextWords = remained.textContent.split('');
         let enteredTextWords = [];
+        let currentKey;
+        let currentText;
 
-        console.log(remainedTextWords)
+        // 新しい問題文をランダムにセットする関数
+        const setQuestion = () => {
+            // 配列questionsの中からランダムに問題文を一つ選ぶ
+            currentKey = Math.floor( Math.random() * questions.length );
+            currentText = questions[ currentKey ];
+
+            // 一度選ばれた問題は配列から削除
+            questions.splice(currentKey, 1);
+            // console.log(questions);
+
+            // 配列の名前.splice(削除したい要素の位置(〇番目), この位置から何個の要素を削除するか)
+
+            // console.log(questions);
+
+            // 現在の問題文をリセットして新しい問題文を表示
+            // 画面の表示をセット
+            entered.textContent = '';
+            remained.textContent = currentText;
+
+            // これまでのフォームの値をリセット
+            inputText.value = '';
+
+            // 入力済みの文字と未入力の文字の配列の中身をリセット
+            enteredTextWords = [];
+            remainedTextWords = currentText.split('');
+        };
+        setQuestion();
+
+        // console.log(remainedTextWords);
 
         document.addEventListener('input', (e) => {
             // console.log(e.data);
@@ -199,13 +261,25 @@
                 // 未入力文字の配列の先頭から一文字削除
                 remainedTextWords.shift();
 
-                console.log('============');
-                console.log('入力済み：' + enteredTextWords);
-                console.log('未入力：' + remainedTextWords);
-                console.log('============');
+                // console.log('============');
+                // console.log('入力済み：' + enteredTextWords);
+                // console.log('未入力：' + remainedTextWords);
+                // console.log('============');
 
-            } else {
-                console.log('不正解')
+                // 入力済みテキスト＆未入力テキストを連結して画面表示
+                entered.textContent = enteredTextWords.join('');
+                remained.textContent = remainedTextWords.join('');
+
+                // 全ての文字が正しく入力されたら新しい問題文をセット
+                if (remainedTextWords.length <= 0) {
+                    if (questions.length <= 0) {
+                        game.classList.add('hidden'); //  ゲーム画面を非表示
+                        message.classList.remove('hidden'); // 終了メッセージを表示
+                    } else {
+                        setQuestion();
+                    }
+                }
+
             }
         });
 
@@ -213,6 +287,12 @@
         // ２、正しく入力できた文字は未入力の文字の配列から削除して、入力済みの文字の配列に追加する
 
 
+        // もう一度プレイするボタン
+        replayBtn.addEventListener('click', () => {
+            window.location.reload();
+        });
+
+        // 記録表示間違えた数、秒数
     </script>
 
 </body>
