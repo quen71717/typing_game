@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -164,7 +164,7 @@
             <span id="entered" class="marker"></span>
             <span id="remained">JavaScript</span>
         </div>
-        <input type="text" class="text" id="inputText">
+        <input type="text" class="text" id="inputText" autocomplete="off">
     </div>
 
     <script>
@@ -179,6 +179,40 @@
             'getElementByClassName',
             'addEventListener'
         ];
+        
+        const entered = document.getElementById('entered');
+        const remained = document.getElementById('remained');
+        const inputText = document.getElementById('inputText');
+
+        let remainedTextWords = remained.textContent.split('');
+        let enteredTextWords = [];
+
+        console.log(remainedTextWords)
+
+        document.addEventListener('input', (e) => {
+            // console.log(e.data);
+            if (remainedTextWords[0] === e.data) {
+                // console.log('正解');
+
+                // 入力済み文字の配列の最後に一文字追加
+                enteredTextWords.push( remainedTextWords[0]);
+                // 未入力文字の配列の先頭から一文字削除
+                remainedTextWords.shift();
+
+                console.log('============');
+                console.log('入力済み：' + enteredTextWords);
+                console.log('未入力：' + remainedTextWords);
+                console.log('============');
+
+            } else {
+                console.log('不正解')
+            }
+        });
+
+        // １、あらかじめ入力済みの文字を未入力の文字を一文字ずつ格納しておく配列を用意する
+        // ２、正しく入力できた文字は未入力の文字の配列から削除して、入力済みの文字の配列に追加する
+
+
     </script>
 
 </body>
